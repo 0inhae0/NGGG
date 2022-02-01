@@ -19,7 +19,6 @@ public class ProductImg {
     @JoinColumn(name = "product_no")
     private Product product;
 
-    @NotEmpty
     private byte[] product_img_name;
 
     private int product_img_code;

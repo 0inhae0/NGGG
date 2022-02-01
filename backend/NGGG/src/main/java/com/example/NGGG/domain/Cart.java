@@ -23,9 +23,7 @@ public class Cart {
     private Product product;
 
     //default값 : 0
-    @NotEmpty
     private int cart_amount;
 
-    @NotEmpty
     private int cart_product_cnt;
 }

@@ -17,26 +17,20 @@ public class Product {
     @Id @GeneratedValue
     private int product_no;
 
-    @NotEmpty
     private String product_name;
 
-    @NotEmpty
     private int product_price;
 
-    @NotEmpty
     private String product_info;
 
-    @NotEmpty
     private LocalDateTime product_regdate;
 
-    @NotEmpty
     private int product_stocks;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "category_no")
     private Category category;
 
-    @NotEmpty
     private int product_like_cnt;
 
     @OneToMany(mappedBy = "product")

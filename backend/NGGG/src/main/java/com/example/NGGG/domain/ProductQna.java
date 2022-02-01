@@ -23,7 +23,6 @@ public class ProductQna {
     @JoinColumn(name = "member_no")
     private Member member;
 
-    @NotEmpty
     private String product_qna_question;
 
     private String product_qna_answer;

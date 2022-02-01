@@ -23,7 +23,6 @@ public class OrderProduct {
     @JoinColumn(name = "product_no")
     private Product product;
 
-    @NotEmpty
     private int product_cnt;
 
 }

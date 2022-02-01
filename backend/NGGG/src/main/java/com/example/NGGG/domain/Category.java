@@ -17,7 +17,6 @@ public class Category {
     @Id @GeneratedValue
     private int category_no;
 
-    @NotEmpty
     private String category_name;
 
     @OneToMany(mappedBy = "category")

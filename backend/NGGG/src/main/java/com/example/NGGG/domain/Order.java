@@ -25,21 +25,16 @@ public class Order {
 
     private int cart_amount; //fk?????
 
-    @NotEmpty
     private String order_name;
 
-    @NotEmpty
     private String order_tel;
 
-    @NotEmpty
     private String order_address;
 
     private String order_comment;
 
-    @NotEmpty
     private LocalDateTime order_date;
 
-    @NotEmpty
     private int order_state;
 
     @OneToOne(mappedBy = "order", fetch = LAZY)

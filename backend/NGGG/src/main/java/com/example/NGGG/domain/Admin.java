@@ -18,19 +18,14 @@ public class Admin {
     @Id @GeneratedValue
     private int admin_no;
 
-    @NotEmpty
     private String admin_name;
 
-    @NotEmpty
     private String admin_id;
 
-    @NotEmpty
     private String admin_pwd;
 
-    @NotEmpty
     private String admin_email;
 
-    @NotEmpty
     private LocalDateTime admin_joindate;
 
     @OneToMany(mappedBy = "admin")

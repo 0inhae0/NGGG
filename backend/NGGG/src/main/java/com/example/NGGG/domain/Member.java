@@ -20,25 +20,18 @@ public class Member {
     @Id @GeneratedValue
     private int member_no;
 
-    @NotEmpty
     private String member_name;
 
-    @NotEmpty
     private String member_id;
 
-    @NotEmpty
     private String member_pwd;
 
-    @NotEmpty
     private String member_tel;
 
-    @NotEmpty
     private String member_address;
 
-    @NotEmpty
     private String member_email;
 
-    @NotEmpty
     private LocalDateTime member_joindate;
 
     @OneToMany(mappedBy = "member")

@@ -17,7 +17,6 @@ public class Paycode {
     @Id @GeneratedValue
     private int paycode_no;
 
-    @NotEmpty
     private String paycode_name; //무통장입금, 신용카드, 카카오페이
 
     @OneToMany(mappedBy = "paycode")
