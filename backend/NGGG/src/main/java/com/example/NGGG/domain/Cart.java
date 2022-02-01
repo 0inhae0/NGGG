@@ -3,7 +3,6 @@ package com.example.NGGG.domain;
 import lombok.Getter;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
 
 import static javax.persistence.FetchType.LAZY;
 
@@ -12,7 +11,8 @@ import static javax.persistence.FetchType.LAZY;
 public class Cart {
 
     @Id @GeneratedValue
-    private int cart_no;
+    @Column(name = "cart_no")
+    private int no;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "member_no")
@@ -23,7 +23,7 @@ public class Cart {
     private Product product;
 
     //default값 : 0
-    private int cart_amount;
+    private int cartAmount;
 
-    private int cart_product_cnt;
+    private int cartProductCnt;
 }

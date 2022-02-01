@@ -3,7 +3,6 @@ package com.example.NGGG.domain;
 import lombok.Getter;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,25 +16,26 @@ import static javax.persistence.FetchType.LAZY;
 public class Order {
 
     @Id @GeneratedValue
-    private int order_no;
+    @Column(name = "order_no")
+    private int no;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "member_no")
     private Member member;
 
-    private int cart_amount; //fk?????
+    private int orderAmount;
 
-    private String order_name;
+    private String orderName;
 
-    private String order_tel;
+    private String orderTel;
 
-    private String order_address;
+    private String orderAddress;
 
-    private String order_comment;
+    private String orderComment;
 
-    private LocalDateTime order_date;
+    private LocalDateTime orderDate;
 
-    private int order_state;
+    private int orderState;
 
     @OneToOne(mappedBy = "order", fetch = LAZY)
     private Pay pay;

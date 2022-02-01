@@ -3,7 +3,6 @@ package com.example.NGGG.domain;
 import lombok.Getter;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
 
 import static javax.persistence.FetchType.LAZY;
 
@@ -13,14 +12,15 @@ import static javax.persistence.FetchType.LAZY;
 public class ProductImg {
 
     @Id @GeneratedValue
-    private int product_img_no;
+    @Column(name = "product_img_no")
+    private int no;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "product_no")
     private Product product;
 
-    private byte[] product_img_name;
+    private byte[] productImgName;
 
-    private int product_img_code;
+    private int productImgCode;
 
 }

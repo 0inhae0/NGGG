@@ -3,7 +3,6 @@ package com.example.NGGG.domain;
 import lombok.Getter;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,23 +14,24 @@ import static javax.persistence.FetchType.LAZY;
 public class Product {
 
     @Id @GeneratedValue
-    private int product_no;
+    @Column(name = "product_no")
+    private int no;
 
-    private String product_name;
+    private String productName;
 
-    private int product_price;
+    private int productPrice;
 
-    private String product_info;
+    private String productInfo;
 
-    private LocalDateTime product_regdate;
+    private LocalDateTime productRegdate;
 
-    private int product_stocks;
+    private int productStocks;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "category_no")
     private Category category;
 
-    private int product_like_cnt;
+    private int productLikeCnt;
 
     @OneToMany(mappedBy = "product")
     private List<Cart> carts = new ArrayList<>();

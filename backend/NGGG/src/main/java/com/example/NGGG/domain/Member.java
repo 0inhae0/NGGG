@@ -4,11 +4,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.validation.constraints.NotEmpty;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,21 +14,22 @@ import java.util.List;
 public class Member {
 
     @Id @GeneratedValue
-    private int member_no;
+    @Column(name = "member_no")
+    private int no;
 
-    private String member_name;
+    private String memberName;
 
-    private String member_id;
+    private String memberId;
 
-    private String member_pwd;
+    private String memberPwd;
 
-    private String member_tel;
+    private String memberTel;
 
-    private String member_address;
+    private String memberAddress;
 
-    private String member_email;
+    private String memberEmail;
 
-    private LocalDateTime member_joindate;
+    private LocalDateTime memberJoindate;
 
     @OneToMany(mappedBy = "member")
     private List<Order> orders = new ArrayList<>();

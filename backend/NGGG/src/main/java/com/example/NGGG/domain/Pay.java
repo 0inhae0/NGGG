@@ -3,7 +3,6 @@ package com.example.NGGG.domain;
 import lombok.Getter;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
 import java.time.LocalDateTime;
 
 import static javax.persistence.FetchType.LAZY;
@@ -13,7 +12,8 @@ import static javax.persistence.FetchType.LAZY;
 public class Pay {
 
     @Id @GeneratedValue
-    private int pay_no;
+    @Column(name = "pay_no")
+    private int no;
 
     @OneToOne(fetch = LAZY)
     @JoinColumn(name = "order_no")
@@ -23,5 +23,5 @@ public class Pay {
     @JoinColumn(name = "paycode_no")
     private Paycode paycode;
 
-    private LocalDateTime pay_date;
+    private LocalDateTime payDate;
 }

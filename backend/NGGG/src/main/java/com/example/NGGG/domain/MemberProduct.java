@@ -12,7 +12,8 @@ import static javax.persistence.FetchType.LAZY;
 public class MemberProduct {
 
     @Id @GeneratedValue
-    private int member_product_no;
+    @Column(name = "member_product_no")
+    private int no;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "member_no")
