@@ -19,18 +19,19 @@ public class MemberService {
      * 회원가입
      */
     public int join(Member member) {
-        validateDuplicateMember(member); //중복회원 검증
+        //validateDuplicateMember(member); //중복회원 검증
         memberRepository.save(member);
         return member.getNo();
     }
 
-    //중복회원 검증
+    //중복 ID 검증
+    /*
     private void validateDuplicateMember(Member member) {
         List<Member> findMembers = memberRepository.findById(member.getMemberId());
         if(!findMembers.isEmpty()) {
-            throw new IllegalStateException("이미 존재하는 회원입니다.");
+            throw new IllegalStateException("이미 존재하는 아이디입니다.");
         }
-    }
+    }*/
 
 
 }

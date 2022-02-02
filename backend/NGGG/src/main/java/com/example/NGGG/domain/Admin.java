@@ -15,11 +15,11 @@ public class Admin {
     @Column(name = "admin_no")
     private int no;
 
-    private String adminName;
-
     private String adminId;
 
     private String adminPwd;
+
+    private String adminName;
 
     private String adminEmail;
 

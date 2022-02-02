@@ -23,11 +23,12 @@ public class ProductQna {
     @JoinColumn(name = "member_no")
     private Member member;
 
-    private String productQnaQuestion;
-
-    private String productQnaAnswer;
-
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "admin_no")
     private Admin admin;
+
+    private String productQnaQue;
+
+    private String productQnaAns;
+
 }

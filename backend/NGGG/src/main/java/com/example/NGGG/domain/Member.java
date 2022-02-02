@@ -3,6 +3,7 @@ package com.example.NGGG.domain;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -10,18 +11,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Getter
+@Getter @Setter
 public class Member {
 
     @Id @GeneratedValue
     @Column(name = "member_no")
     private int no;
 
-    private String memberName;
-
     private String memberId;
 
     private String memberPwd;
+
+    private String memberName;
+
+    private String memberNickname;
 
     private String memberTel;
 
