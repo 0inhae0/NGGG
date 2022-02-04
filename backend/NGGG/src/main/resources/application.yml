@@ -1,0 +1,27 @@
+# 설정 정보
+spring:
+  datasource:
+    url: jdbc:h2:tcp://localhost/~/nggg
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+
+  jpa:
+    hibernate:
+# ddl-auto: create : 기존테이블 삭제 후 다시 생성(DROP+CREATE)
+# create는 반드시 로컬환경에서만 사용하기
+      ddl-auto: create
+    properties:
+      hibernate:
+        # show-sql: true
+        format_sql: true
+        default_batch_fetch_size: 100
+
+logging.level:
+  # log를 통해 sql 출력
+  org.hibernate.SQL: debug
+  # log를 통해 쿼리 파라미터 출력
+  org.hibernate.type: trace
+
+server:
+  port: 7080
