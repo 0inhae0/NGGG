@@ -4,6 +4,8 @@ import lombok.Getter;
 
 import javax.persistence.*;
 
+import java.time.LocalDate;
+
 import static javax.persistence.FetchType.LAZY;
 
 @Entity
@@ -30,5 +32,7 @@ public class ProductQna {
     private String productQnaQue;
 
     private String productQnaAns;
+
+    private LocalDate qnaRegdate;
 
 }

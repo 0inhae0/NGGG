@@ -1,43 +1,20 @@
 package com.example.NGGG.repository;
 
-
 import com.example.NGGG.domain.Member;
-import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.EntityManager;
-import java.util.List;
+import java.util.Optional;
+
 
 @Repository
-@RequiredArgsConstructor
-public class MemberRepository {
+public interface MemberRepository extends JpaRepository<Member, Integer> {
 
-    private final EntityManager em;
-
-    public void save(Member member) {
-        em.persist(member);
-    }
-
-    public Member findOne(int no) {
-        return em.find(Member.class, no);
-    }
-
-    public List<Member> findById(String id) {
-        return em.createQuery("select m from Member m where m.member_id = :member_id", Member.class)
-                .setParameter("member_id", id)
-                .getResultList();
-    }
-
-    public List<Member> findByNickname(String nickname) {
-        return em.createQuery("select m from Member m where m.member_nickname = :member_nickname", Member.class)
-                .setParameter("member_nickname", nickname)
-                .getResultList();
-    }
-
-    public List<Member> findByEmail(String email) {
-        return em.createQuery("select m from Member m where m.member_email = :member_email", Member.class)
-                .setParameter("member_email", email)
-                .getResultList();
-    }
+    boolean existsByMemberId(String memberId);
+    boolean existsByMemberEmail(String memberEmail);
+    boolean existsByMemberNickname(String memberNickname);
+    Member findById(int no);
+    //Member findByMemberId(String memberId);
+    Optional<Member> findByMemberId(String memberId);
 
 }

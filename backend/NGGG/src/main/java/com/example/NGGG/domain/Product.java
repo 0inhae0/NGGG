@@ -1,9 +1,10 @@
 package com.example.NGGG.domain;
 
 import lombok.Getter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +24,8 @@ public class Product {
 
     private String productInfo;
 
-    private LocalDateTime productRegdate;
+    @CreationTimestamp
+    private LocalDate productRegdate;
 
     private int productStocks;
 
