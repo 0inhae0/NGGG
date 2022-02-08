@@ -2,6 +2,7 @@ package com.example.NGGG.service;
 
 import com.example.NGGG.common.security.JwtTokenProvider;
 import com.example.NGGG.domain.Member;
+import com.example.NGGG.dto.LoginMemberResponse;
 import com.example.NGGG.dto.UpdateMemberRequest;
 import com.example.NGGG.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -34,14 +35,16 @@ public class MemberService {
      * 로그인
      */
 
-    public String login(String id, String pwd) {
+    public LoginMemberResponse login(String id, String pwd) {
         Member findMember = memberRepository.findByMemberId(id)
                 .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 아이디입니다."));
         if(!passwordEncoder.matches(pwd, findMember.getMemberPwd())) {
             //비밀번호가 일치하지 않음
             throw new IllegalArgumentException("잘못된 비밀번호입니다.");
         }
-        return jwtTokenProvider.createToken(findMember.getUsername(), findMember.getRoles());
+        String token = jwtTokenProvider.createToken("M" ,findMember.getUsername(), findMember.getRoles());
+        int memberNo = findMember.getNo();
+        return new LoginMemberResponse(token, memberNo);
     }
 
     /**

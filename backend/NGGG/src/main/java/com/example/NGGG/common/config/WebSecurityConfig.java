@@ -46,7 +46,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(MappingConstant.All).permitAll()
 
                 //회원만 가능
-                .antMatchers(MappingConstant.Member).hasAnyRole("MEMBER")
+                .antMatchers(MappingConstant.Member).hasRole("MEMBER")
 
                 //관리자만 가능
                 .antMatchers(MappingConstant.Admin).hasRole("ADMIN")

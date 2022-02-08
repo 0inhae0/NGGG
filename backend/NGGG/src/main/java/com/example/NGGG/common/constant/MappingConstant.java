@@ -17,7 +17,12 @@ public class MappingConstant {
             "/member/signup",
             "/member/namecheck",
             "/member/idcheck",
-            "/member/emailcheck"
+            "/member/emailcheck",
+            "/admin/signup",
+            "/admin/login",
+            "/admin/idcheck",
+            "/admin/emailcheck",
+
     };
     
     //회원만 가능
@@ -42,6 +47,8 @@ public class MappingConstant {
             "/product/image/{product_no}",
             "/product/delete/{product_no}",
             "/qna/answer",
+            "/admin/{admin_no}",
+            "/admin/update/{admin_no}",
     };
 
     //회원, 관리자 둘 다 가능

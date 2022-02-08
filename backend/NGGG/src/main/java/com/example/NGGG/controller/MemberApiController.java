@@ -1,6 +1,7 @@
 package com.example.NGGG.controller;
 
 import com.example.NGGG.domain.Member;
+import com.example.NGGG.dto.LoginMemberResponse;
 import com.example.NGGG.dto.UpdateMemberRequest;
 import com.example.NGGG.service.MemberService;
 import lombok.Data;
@@ -26,9 +27,9 @@ public class MemberApiController {
      * 로그인
      */
     @PostMapping("/member/login")
-    public String loginMember(@RequestBody LoginMemberRequest request) {
-        String token = memberService.login(request.getMemberId(), request.getMemberPwd());
-        return token;
+    public LoginMemberResponse loginMember(@RequestBody LoginMemberRequest request) {
+        LoginMemberResponse response = memberService.login(request.getMemberId(), request.getMemberPwd());
+        return response;
     }
 
     /**
@@ -116,10 +117,10 @@ public class MemberApiController {
     //DTO for 회원가입(response)
     @Data
     static class CreateMemberResponse {
-        private int no;
+        private int memberNo;
 
         public CreateMemberResponse(int no) {
-            this.no = no;
+            this.memberNo = no;
         }
     }
 
