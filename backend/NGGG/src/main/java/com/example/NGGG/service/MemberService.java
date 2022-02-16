@@ -1,9 +1,12 @@
 package com.example.NGGG.service;
 
 import com.example.NGGG.common.security.JwtTokenProvider;
+import com.example.NGGG.common.security.UserType;
 import com.example.NGGG.domain.Member;
 import com.example.NGGG.dto.LoginMemberResponse;
 import com.example.NGGG.dto.UpdateMemberRequest;
+import com.example.NGGG.exception.NotFoundException;
+import com.example.NGGG.exception.WrongArgException;
 import com.example.NGGG.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,30 +24,30 @@ public class MemberService {
     private final JwtTokenProvider jwtTokenProvider;
 
     /**
+     * 로그인
+     */
+    public LoginMemberResponse login(String id, String pwd) {
+        Member findMember = memberRepository.findByMemberId(id)
+                .orElseThrow(() -> new NotFoundException("ID Not Found"));
+        if(!passwordEncoder.matches(pwd, findMember.getMemberPwd())) {
+            //비밀번호가 일치하지 않음
+            throw new WrongArgException("Wrong Password");
+        }
+        String token = jwtTokenProvider.createToken(UserType.MEMBER.toString(), findMember.getUsername(), findMember.getRoles());
+        int memberNo = findMember.getNo();
+        return new LoginMemberResponse(token, memberNo);
+    }
+
+    /**
      * 회원가입
      */
     public int join(Member member) {
         //비밀번호 암호화
         String encodedMemberPwd = passwordEncoder.encode(member.getMemberPwd());
         member.setMemberPwd(encodedMemberPwd);
+
         memberRepository.save(member);
         return member.getNo();
-    }
-
-    /**
-     * 로그인
-     */
-
-    public LoginMemberResponse login(String id, String pwd) {
-        Member findMember = memberRepository.findByMemberId(id)
-                .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 아이디입니다."));
-        if(!passwordEncoder.matches(pwd, findMember.getMemberPwd())) {
-            //비밀번호가 일치하지 않음
-            throw new IllegalArgumentException("잘못된 비밀번호입니다.");
-        }
-        String token = jwtTokenProvider.createToken("M" ,findMember.getUsername(), findMember.getRoles());
-        int memberNo = findMember.getNo();
-        return new LoginMemberResponse(token, memberNo);
     }
 
     /**
@@ -74,18 +77,20 @@ public class MemberService {
      */
     @Transactional
     public void update(int no, UpdateMemberRequest request) {
-        Member findMember = memberRepository.findById(no);
+        Member findMember = memberRepository.findById(no)
+                .orElseThrow(() -> new NotFoundException("Member Not Found"));
         //비밀번호 암호화
         String encodedMemberPwd = passwordEncoder.encode(request.getMemberPwd());
         request.setMemberPwd(encodedMemberPwd);
+
         findMember.updateMember(request);
     }
 
     /**
      * 회원 한명 조회
      */
-    public Member findOne(int no) {
-        return memberRepository.findById(no);
+    public Member findOne(int no){
+        return memberRepository.findByNo(no);
     }
 
 

@@ -3,11 +3,14 @@ package com.example.NGGG.controller;
 import com.example.NGGG.domain.Admin;
 import com.example.NGGG.dto.LoginAdminResponse;
 import com.example.NGGG.dto.UpdateAdminRequest;
+import com.example.NGGG.exception.ConflictException;
+import com.example.NGGG.exception.UnAuthorizedException;
 import com.example.NGGG.service.AdminService;
 import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -19,6 +22,7 @@ import javax.validation.constraints.Size;
 import java.time.LocalDate;
 
 import static com.example.NGGG.controller.AdminApiController.CreateAdminRequest.createAdmin;
+import static java.lang.Integer.parseInt;
 import static java.util.Collections.singletonList;
 
 @RestController
@@ -31,9 +35,9 @@ public class AdminApiController {
      * 로그인
      */
     @PostMapping("/admin/login")
-    public LoginAdminResponse loginAdmin(@RequestBody LoginAdminRequest request) {
+    public ResponseEntity<?> loginAdmin(@RequestBody @Valid LoginAdminRequest request) {
         LoginAdminResponse response = adminService.login(request.getAdminId(), request.getAdminPwd());
-        return response;
+        return ResponseEntity.ok(response);
     }
 
     /**
@@ -46,7 +50,7 @@ public class AdminApiController {
 
         if (adminService.checkIdDuplicate(request.getAdminId())
                 || adminService.checkEmailDuplicate(request.getAdminEmail())) {
-            throw new IllegalStateException("이미 존재하는 회원입니다.");
+            throw new ConflictException("Unavaliable SignUp Data");
         } else {
             int no = adminService.join(admin);
             return new CreateAdminResponse(no);
@@ -78,7 +82,11 @@ public class AdminApiController {
     @PostMapping("/admin/update/{admin_no}")
     public AdminResponse updateAdmin(
             @PathVariable("admin_no") int no,
-            @RequestBody @Valid UpdateAdminRequest request) {
+            @RequestBody @Valid UpdateAdminRequest request,
+            Authentication authentication) {
+
+        //자기 id 아니면
+        if(parseInt(authentication.getName()) != no) throw new UnAuthorizedException("Not Allowed to Access");
 
         adminService.update(no, request);
         Admin findAdmin = adminService.findOne(no);
@@ -89,7 +97,11 @@ public class AdminApiController {
      * 개인정보 조회
      */
     @GetMapping("/admin/{admin_no}")
-    public AdminResponse viewAdmin(@PathVariable("admin_no") int no) {
+    public AdminResponse viewAdmin(@PathVariable("admin_no") int no, Authentication authentication) {
+
+        //자기 id 아니면
+        if(parseInt(authentication.getName()) != no) throw new UnAuthorizedException("Not Allowed to Access");
+
         Admin findAdmin = adminService.findOne(no);
         return new AdminResponse(findAdmin);
     }

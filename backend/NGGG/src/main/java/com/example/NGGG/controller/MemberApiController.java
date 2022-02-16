@@ -3,11 +3,14 @@ package com.example.NGGG.controller;
 import com.example.NGGG.domain.Member;
 import com.example.NGGG.dto.LoginMemberResponse;
 import com.example.NGGG.dto.UpdateMemberRequest;
+import com.example.NGGG.exception.ConflictException;
+import com.example.NGGG.exception.UnAuthorizedException;
 import com.example.NGGG.service.MemberService;
 import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -15,6 +18,7 @@ import javax.validation.constraints.*;
 
 
 import static com.example.NGGG.controller.MemberApiController.CreateMemberRequest.createMember;
+import static java.lang.Integer.parseInt;
 import static java.util.Collections.singletonList;
 
 @RestController
@@ -23,13 +27,14 @@ public class MemberApiController {
 
     private final MemberService memberService;
 
+
     /**
      * 로그인
      */
     @PostMapping("/member/login")
-    public LoginMemberResponse loginMember(@RequestBody LoginMemberRequest request) {
+    public ResponseEntity<?> loginMember(@RequestBody LoginMemberRequest request) {
         LoginMemberResponse response = memberService.login(request.getMemberId(), request.getMemberPwd());
-        return response;
+        return ResponseEntity.ok(response);
     }
 
     /**
@@ -43,7 +48,7 @@ public class MemberApiController {
         if (memberService.checkIdDuplicate(request.getMemberId())
             || memberService.checkEmailDuplicate(request.getMemberEmail())
             || memberService.checkNicknameDuplicate(request.getMemberNickname())) {
-            throw new IllegalStateException("이미 존재하는 회원입니다.");
+            throw new ConflictException("Unavaliable SignUp Data");
         } else {
             int no = memberService.join(member);
             return new CreateMemberResponse(no);
@@ -83,9 +88,13 @@ public class MemberApiController {
      * 개인정보 수정
      */
     @PostMapping("/member/update/{member_no}")
-    public MemberResponse updateMember(
+    public MemberResponse updateMember (
             @PathVariable("member_no") int no,
-            @RequestBody @Valid UpdateMemberRequest request) {
+            @RequestBody @Valid UpdateMemberRequest request,
+            Authentication authentication) {
+
+        //자기 id 아니면
+        if(parseInt(authentication.getName()) != no) throw new UnAuthorizedException("Not Allowed to Access");
 
         memberService.update(no, request);
         Member findMember = memberService.findOne(no);
@@ -97,7 +106,11 @@ public class MemberApiController {
      * 개인정보 조회
      */
     @GetMapping("/member/{member_no}")
-    public MemberResponse viewMember(@PathVariable("member_no") int no) {
+    public MemberResponse viewMember(@PathVariable("member_no") int no, Authentication authentication) {
+
+        //자기 id 아니면
+        if(parseInt(authentication.getName()) != no) throw new UnAuthorizedException("Not Allowed to Access");
+
         Member findMember = memberService.findOne(no);
         return new MemberResponse(findMember);
     }

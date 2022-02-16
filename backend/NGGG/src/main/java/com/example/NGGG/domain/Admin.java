@@ -71,7 +71,7 @@ public class Admin implements UserDetails {
 
     @Override
     public String getUsername() {
-        return adminId;
+        return Integer.toString(no);
     }
 
     @Override

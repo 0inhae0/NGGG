@@ -1,6 +1,8 @@
 package com.example.NGGG.domain;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 
@@ -11,6 +13,7 @@ import static javax.persistence.FetchType.LAZY;
 @Entity
 @Table(name = "product_qna")
 @Getter
+@NoArgsConstructor
 public class ProductQna {
 
     @Id @GeneratedValue
@@ -33,6 +36,8 @@ public class ProductQna {
 
     private String productQnaAns;
 
+    @CreationTimestamp
     private LocalDate qnaRegdate;
+
 
 }

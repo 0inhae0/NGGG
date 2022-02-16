@@ -93,9 +93,7 @@ public class Member implements UserDetails {
     }
 
     @Override
-    public String getUsername() {
-        return memberId;
-    }
+    public String getUsername() { return Integer.toString(no); }
 
     @Override
     public String getPassword() {

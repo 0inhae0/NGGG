@@ -1,6 +1,5 @@
 package com.example.NGGG.common.security;
 
-import com.example.NGGG.common.security.CustomUserDetailService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
@@ -48,7 +47,7 @@ public class JwtTokenProvider {
     }
 
 
-    // JWT 토큰에서 인증 정보 조회
+    // JWT 토큰에서 인증 정보 조회(token => Authentication)
     public Authentication getAuthentication(String token) {
         //s[0] = userType, s[1\ = userPk
         String s[] = this.getUserInfo(token).split("-");
