@@ -4,6 +4,7 @@ import com.example.NGGG.domain.Admin;
 import com.example.NGGG.dto.LoginAdminResponse;
 import com.example.NGGG.dto.UpdateAdminRequest;
 import com.example.NGGG.exception.ConflictException;
+import com.example.NGGG.exception.ForbiddenException;
 import com.example.NGGG.exception.UnAuthorizedException;
 import com.example.NGGG.service.AdminService;
 import lombok.Data;
@@ -50,7 +51,7 @@ public class AdminApiController {
 
         if (adminService.checkIdDuplicate(request.getAdminId())
                 || adminService.checkEmailDuplicate(request.getAdminEmail())) {
-            throw new ConflictException("Unavaliable SignUp Data");
+            throw new ConflictException("Unavailable SignUp Data");
         } else {
             int no = adminService.join(admin);
             return new CreateAdminResponse(no);
@@ -86,7 +87,7 @@ public class AdminApiController {
             Authentication authentication) {
 
         //자기 id 아니면
-        if(parseInt(authentication.getName()) != no) throw new UnAuthorizedException("Not Allowed to Access");
+        if(parseInt(authentication.getName()) != no) throw new ForbiddenException("Access Denied");
 
         adminService.update(no, request);
         Admin findAdmin = adminService.findOne(no);
@@ -100,7 +101,7 @@ public class AdminApiController {
     public AdminResponse viewAdmin(@PathVariable("admin_no") int no, Authentication authentication) {
 
         //자기 id 아니면
-        if(parseInt(authentication.getName()) != no) throw new UnAuthorizedException("Not Allowed to Access");
+        if(parseInt(authentication.getName()) != no) throw new ForbiddenException("Access Denied");
 
         Admin findAdmin = adminService.findOne(no);
         return new AdminResponse(findAdmin);

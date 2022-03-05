@@ -29,13 +29,13 @@ public class CustomUserDetailService implements UserDetailsService {
         if(type.equals(UserType.MEMBER.toString())) {
 
             return memberRepository.findById(Integer.parseInt(no))
-                    .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
+                    .orElseThrow(() -> new UsernameNotFoundException("Member Not Found"));
         }
 
         //관리자일 때
         else {
             return adminRepository.findById(Integer.parseInt(no))
-                    .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
+                    .orElseThrow(() -> new UsernameNotFoundException("Admin Not Found"));
         }
 
     }

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class ExceptionController {
 
     //400: 잘못된 정보 입력
-    @ExceptionHandler({WrongArgException.class, RuntimeException.class})
+    @ExceptionHandler({NotEnoughStocksException.class, WrongArgException.class, RuntimeException.class})
     public ResponseEntity<?> BadRequestException(final RuntimeException ex){
         return ResponseEntity.badRequest().body(ex.getMessage());
     }
@@ -23,13 +23,12 @@ public class ExceptionController {
     }
 
     //403 Forbidden: 로그인은 됐는데 접근권한이 없음
-    /*
-    @ExceptionHandler({StopException.class})
-    public ResponseEntity<?> ForbiddenException(final BlackListException ex){
+    @ExceptionHandler({ForbiddenException.class})
+    public ResponseEntity<?> ForbiddenException(final ForbiddenException ex){
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
-    }*/
+    }
 
-    //404 Not Found: 요청 리소스를 찾을 수 없음 / 권한이 부족한 리소스에 접근할 때 해당 리소스를 숨기고 싶을 때
+    //404 Not Found: 요청 리소스를 찾을 수 없음
     @ExceptionHandler({NotFoundException.class})
     public ResponseEntity<?> NotFoundException(final NotFoundException ex){
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());

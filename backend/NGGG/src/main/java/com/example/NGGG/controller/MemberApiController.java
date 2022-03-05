@@ -4,10 +4,10 @@ import com.example.NGGG.domain.Member;
 import com.example.NGGG.dto.LoginMemberResponse;
 import com.example.NGGG.dto.UpdateMemberRequest;
 import com.example.NGGG.exception.ConflictException;
-import com.example.NGGG.exception.UnAuthorizedException;
+import com.example.NGGG.exception.ForbiddenException;
 import com.example.NGGG.service.MemberService;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -48,7 +48,7 @@ public class MemberApiController {
         if (memberService.checkIdDuplicate(request.getMemberId())
             || memberService.checkEmailDuplicate(request.getMemberEmail())
             || memberService.checkNicknameDuplicate(request.getMemberNickname())) {
-            throw new ConflictException("Unavaliable SignUp Data");
+            throw new ConflictException("Unavailable SignUp Data");
         } else {
             int no = memberService.join(member);
             return new CreateMemberResponse(no);
@@ -70,6 +70,7 @@ public class MemberApiController {
      */
     @PostMapping("/member/namecheck")
     public ResponseEntity<Boolean> checkNicknameDuplicate(@RequestBody String nickname) {
+        //중복인 경우 true, 아니면 false
         return ResponseEntity.ok(memberService.checkNicknameDuplicate(nickname));
     }
 
@@ -94,7 +95,7 @@ public class MemberApiController {
             Authentication authentication) {
 
         //자기 id 아니면
-        if(parseInt(authentication.getName()) != no) throw new UnAuthorizedException("Not Allowed to Access");
+        if(parseInt(authentication.getName()) != no) throw new ForbiddenException("Access Denied");
 
         memberService.update(no, request);
         Member findMember = memberService.findOne(no);
@@ -109,7 +110,7 @@ public class MemberApiController {
     public MemberResponse viewMember(@PathVariable("member_no") int no, Authentication authentication) {
 
         //자기 id 아니면
-        if(parseInt(authentication.getName()) != no) throw new UnAuthorizedException("Not Allowed to Access");
+        if(parseInt(authentication.getName()) != no) throw new ForbiddenException("Access Denied");
 
         Member findMember = memberService.findOne(no);
         return new MemberResponse(findMember);
@@ -129,12 +130,9 @@ public class MemberApiController {
 
     //DTO for 회원가입(response)
     @Data
+    @AllArgsConstructor
     static class CreateMemberResponse {
         private int memberNo;
-
-        public CreateMemberResponse(int no) {
-            this.memberNo = no;
-        }
     }
 
     //DTO for 회원가입(request)
@@ -176,7 +174,8 @@ public class MemberApiController {
     }
 
     //DTO for 개인정보 수정(response), 개인정보 조회(response)
-    @Getter
+    @Data
+    @AllArgsConstructor
     static class MemberResponse {
 
         private String memberId;
