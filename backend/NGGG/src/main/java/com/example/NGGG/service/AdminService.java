@@ -3,6 +3,7 @@ package com.example.NGGG.service;
 import com.example.NGGG.common.security.JwtTokenProvider;
 import com.example.NGGG.common.security.UserType;
 import com.example.NGGG.domain.Admin;
+import com.example.NGGG.domain.ProductQna;
 import com.example.NGGG.dto.LoginAdminResponse;
 import com.example.NGGG.dto.UpdateAdminRequest;
 import com.example.NGGG.exception.NotFoundException;
@@ -12,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @Transactional
@@ -81,6 +84,20 @@ public class AdminService {
      * 회원 한명 조회
      */
     public Admin findOne(int no) {
-        return adminRepository.findByNo(no);
+        Admin findAdmin = adminRepository.findById(no)
+                .orElseThrow(() -> new NotFoundException("Admin Not Found"));
+        return findAdmin;
+    }
+
+    /**
+     * 회원 삭제
+     */
+    public void deleteAdmin(int no) {
+        Admin findAdmin = adminRepository.findById(no)
+                .orElseThrow(() -> new NotFoundException("Admin Not Found"));
+        //연관관계 끊기
+        findAdmin.getProductQnas().stream()
+                        .forEach(q -> q.setAdmin(null));
+        adminRepository.deleteById(no);
     }
 }

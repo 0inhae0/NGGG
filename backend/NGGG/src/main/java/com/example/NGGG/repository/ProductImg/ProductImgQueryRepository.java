@@ -24,4 +24,13 @@ public class ProductImgQueryRepository {
                 .setParameter("no", productNo)
                 .getResultList();
     }
+
+    public int deleteByProductNo(int productNo) {
+        return em.createQuery(
+                "delete from ProductImg i" +
+                        " join i.product p" +
+                        " where p.no = :no")
+                .setParameter("no", productNo)
+                .executeUpdate();
+    }
 }

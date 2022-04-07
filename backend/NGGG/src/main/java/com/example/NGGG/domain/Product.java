@@ -33,16 +33,18 @@ public class Product {
     @CreationTimestamp
     private LocalDate productRegdate;
 
+    @Setter
     private int productStocks;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "category_no")
     private Category category;
 
+    @Setter
     @ColumnDefault("0")
     private int productLikeCnt; //default 0
 
-    @OneToMany(mappedBy = "product")
+    @OneToMany(mappedBy = "product", cascade = CascadeType.REMOVE)
     private List<Cart> carts = new ArrayList<>();
 
     @OneToMany(mappedBy = "product")
@@ -51,13 +53,13 @@ public class Product {
     @OneToMany(mappedBy = "product")
     private List<ProductReview> productReviews = new ArrayList<>();
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "product", cascade = CascadeType.REMOVE)
     private List<ProductImg> productImgs = new ArrayList<>();
 
     @OneToMany(mappedBy = "product")
     private List<OrderProduct> orderProducts = new ArrayList<>();
 
-    @OneToMany(mappedBy = "product")
+    @OneToMany(mappedBy = "product", cascade = CascadeType.REMOVE)
     private List<MemberProduct> memberProducts = new ArrayList<>();
 
     //==연관관계 편의 메소드==//
@@ -66,7 +68,7 @@ public class Product {
         category.getProducts().add(this);
     }
 
-    //==생성 메서드==//
+    //==생성 메소드==//
     public static Product createProduct(String productName, int productPrice, String productInfo, int productStocks, Category category) {
         Product product = new Product();
         product.setProductName(productName);
@@ -95,5 +97,4 @@ public class Product {
         }
         this.productStocks -= quantity;
     }
-
 }

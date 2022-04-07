@@ -4,6 +4,8 @@ import com.example.NGGG.domain.Category;
 import com.example.NGGG.domain.Product;
 import com.example.NGGG.dto.ProductDto;
 import com.example.NGGG.dto.ProductListPageResponse;
+import com.example.NGGG.dto.ProductRequest;
+import com.example.NGGG.exception.NotFoundException;
 import com.example.NGGG.exception.WrongArgException;
 import com.example.NGGG.repository.CategoryRepository;
 import com.example.NGGG.repository.Product.ProductQueryRepository;
@@ -11,11 +13,9 @@ import com.example.NGGG.repository.Product.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,7 +36,7 @@ public class ProductService {
     public int addProduct(String productName, int productPrice, String productInfo, int productStocks, int categoryNo) {
         //엔티티 조회
         Category category = categoryRepository.findById(categoryNo)
-                .orElseThrow(() -> new WrongArgException("Bad Category Request"));
+                .orElseThrow(() -> new NotFoundException("Category Not Found"));
 
         //상품 생성
         Product product = Product.createProduct(productName, productPrice, productInfo, productStocks, category);
@@ -47,7 +47,7 @@ public class ProductService {
 
 
     /**
-     * 상품 리스트 조회 - 전체(카테고리별)
+     * 상품 리스트 조회 - 전체, 카테고리별
      */
     @Transactional
     public ProductListPageResponse getProductList(String categoryName, PageRequest pageRequest, int sort) {
@@ -58,12 +58,13 @@ public class ProductService {
         int size = pageRequest.getPageSize();
         Category category = categoryRepository.findByCategoryName(categoryName);
 
-
-        if(category == null) { //전체
-            Page<Product> page = productRepository.findAll(pageRequest);
-            productList = page.getContent();
-            totalCount = Math.toIntExact(page.getTotalElements());
-            totalPages = page.getTotalPages();
+        if(category == null) {
+            if(categoryName.equals("A")) { //전체
+                Page<Product> page = productRepository.findAll(pageRequest);
+                productList = page.getContent();
+                totalCount = Math.toIntExact(page.getTotalElements());
+                totalPages = page.getTotalPages();
+            } else throw new WrongArgException("Wrong Category Input");
         } else { //스티커, 엽서, 키링, 머그컵, 그외
             int categoryNo = category.getNo();
             int offset = Math.toIntExact(pageRequest.getOffset());
@@ -78,43 +79,6 @@ public class ProductService {
                 .collect(Collectors.toList());
 
         return new ProductListPageResponse(productDtoList, totalCount, totalPages);
-
-/*
-        //카테고리 기준으로 상품 리스트 조회
-        Category category = categoryRepository.findByCategoryName(categoryName);
-        if(category == null) { //전체
-            productList = productRepository.findAll();
-        } else { //스티커, 엽서, 키링, 머그컵, 그외
-            int categoryNo = category.getNo();
-            productList = productQueryRepository.findByCategory(categoryNo);
-        }
-
-        //정렬(인기순, 신상품순, 높은가격순, 낮은가격순)
-        switch(sort) {
-            case 0: //인기순
-                 productList = productList.stream()
-                        .sorted(Comparator.comparing(Product::getProductLikeCnt).reversed())
-                        .collect(Collectors.toList());
-                break;
-            case 1: //신상품순
-                productList = productList.stream()
-                        .sorted(Comparator.comparing(Product::getProductRegdate).reversed())
-                        .collect(Collectors.toList());
-                break;
-            case 2: //높은가격순
-                productList = productList.stream()
-                        .sorted(Comparator.comparing(Product::getProductPrice).reversed())
-                        .collect(Collectors.toList());
-                break;
-            case 3: //낮은가격순
-                productList = productList.stream()
-                        .sorted(Comparator.comparing(Product::getProductPrice))
-                        .collect(Collectors.toList());
-                break;
-            default: break;
-        }
-
-        return productList;*/
     }
 
     /**
@@ -135,14 +99,50 @@ public class ProductService {
         return productList;
     }
 
+    /**
+     * 상품 수정
+     */
+    @Transactional
+    public void update(int productNo, ProductRequest request) {
+        Product findProduct = productRepository.findById(productNo)
+                .orElseThrow(() -> new NotFoundException("Product Not Found"));
+        Category category = categoryRepository.findById(request.getCategoryNo())
+                .orElseThrow(() -> new NotFoundException("Category Not Found"));
+
+        findProduct.setProductName(request.getProductName());
+        findProduct.setProductPrice(request.getProductPrice());
+        findProduct.setProductInfo(request.getProductInfo());
+        findProduct.setProductStocks(request.getProductStocks());
+        findProduct.setCategory(category);
+    }
+
 
     /**
      * 상품 삭제
      */
     @Transactional
     public void deleteProduct(int productNo) {
+        Product findProduct = productRepository.findById(productNo)
+                .orElseThrow(() -> new NotFoundException("Product Not Found"));
+        //연관관계 끊기
+        findProduct.getProductQnas().stream()
+                        .forEach(q -> q.setProduct(null));
+        findProduct.getProductReviews().stream()
+                        .forEach(r -> r.setProduct(null));
+        findProduct.getOrderProducts().stream()
+                        .forEach(op -> op.setProduct(null));
         productRepository.deleteById(productNo);
     }
+
+    /**
+     * 상품 하나 조회
+     */
+    public Product findProduct(int productNo) {
+        Product findProduct = productRepository.findById(productNo)
+                .orElseThrow(() -> new NotFoundException("Product Not Found"));
+        return findProduct;
+    }
+
 
 
 

@@ -4,9 +4,6 @@ import lombok.Getter;
 
 import javax.persistence.*;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-
 import static javax.persistence.FetchType.LAZY;
 
 @Entity
@@ -27,5 +24,15 @@ public class OrderProduct {
     private Product product;
 
     private int productCnt;
+
+    //==연관관계 편의 메소드==//
+    public void setProduct(Product product) {
+        if(product == null) { //Product을 삭제할 때 연관관계 끊기 위함
+            this.product = null;
+        } else {
+            this.product = product;
+            product.getOrderProducts().add(this);
+        }
+    }
 
 }

@@ -7,13 +7,13 @@ public class MappingConstant {
     public static String[] All = {
 
             "/member/login",
-            "/product/select/{product_no}",
+            "/product/{product_no}",
             "/product/list",
             "/product/new",
             "/product/best",
             "/product/search",
             "/review/{product_no}",
-            "/product/qna/{product_no}",
+            "/product/{product_no}/qna",
             "/member/signup",
             "/member/namecheck",
             "/member/idcheck",
@@ -22,6 +22,8 @@ public class MappingConstant {
             "/admin/login",
             "/admin/idcheck",
             "/admin/emailcheck",
+            "/main/{img_name}",
+            "/detail/{img_name}"
 
     };
     
@@ -30,14 +32,15 @@ public class MappingConstant {
             "/review/add",
             "/review/{member_no}",
             "/qna/add",
-            "/member/qna/{member_no}",
-            "/qna/delete/{product_qna_no}",
-            "/member/update/{member_no}",
+            "/member/{member_no}/qna",
+            "/qna/{product_qna_no}/delete",
+            "/member/{member_no}/update",
             "/like/{member_no}",
             "/cart/{member_no}",
             "/order/{member_no}",
             "/order/{member_no}/pay",
-            "/member/{member_no}/orderhistory"
+            "/member/{member_no}/orderhistory",
+            "/member/{member_no}/delete"
             
     };
     
@@ -45,11 +48,11 @@ public class MappingConstant {
     public static String[] Admin = {
             "/product/add",
             "/product/update",
-            "/product/image/{product_no}",
-            "/product/delete/{product_no}",
+            "/product/{product_no}/delete",
             "/qna/answer",
             "/admin/{admin_no}",
-            "/admin/update/{admin_no}",
+            "/admin/{admin_no}/update",
+            "/admin/{admin_no}/delete"
     };
 
     //회원, 관리자 둘 다 가능
@@ -58,6 +61,6 @@ public class MappingConstant {
             "/qna/delete/{qna_no}",
             "/member/{member_no}",
             "/member/{member_no}/orderhistory",
-            "member/{member_no}/orderhistory/{order_no}"
+            "/member/{member_no}/orderhistory/{order_no}"
     };
 }

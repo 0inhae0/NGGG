@@ -1,10 +1,13 @@
 package com.example.NGGG.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
+@AllArgsConstructor
 public class QnaByProductNoQueryDto {
 
     private int productQnaNo;
@@ -18,15 +21,5 @@ public class QnaByProductNoQueryDto {
     private String productQnaAns;
 
     //time
-    private LocalDate qnaRegdate;
-
-    public QnaByProductNoQueryDto(int productQnaNo, String memberNickname, String productQnaQue, String adminName, String productQnaAns, LocalDate qnaRegdate) {
-        this.productQnaNo = productQnaNo;
-        this.memberNickname = memberNickname;
-        this.productQnaQue = productQnaQue;
-        this.adminName = adminName;
-        this.productQnaAns = productQnaAns;
-        this.qnaRegdate = qnaRegdate;
-    }
-
+    private LocalDateTime qnaRegdate;
 }

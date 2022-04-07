@@ -42,4 +42,13 @@ public class Order {
 
     @OneToMany(mappedBy = "order")
     private List<OrderProduct> orderProducts = new ArrayList<>();
+
+    public void setMember(Member member) {
+        if(member == null) { //Member을 삭제할 때 연관관계 끊기 위함
+            this.member = null;
+        } else {
+            this.member = member;
+            member.getOrders().add(this);
+        }
+    }
 }

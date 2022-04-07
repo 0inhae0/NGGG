@@ -8,6 +8,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import javax.persistence.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import static javax.persistence.FetchType.LAZY;
 
@@ -40,12 +41,16 @@ public class ProductQna {
     private String productQnaAns;
 
     @CreationTimestamp
-    private LocalDate qnaRegdate;
+    private LocalDateTime qnaRegdate;
 
     //==연관관계 편의 메서드==//
     public void setProduct(Product product) {
-        this.product = product;
-        product.getProductQnas().add(this);
+        if(product == null) {
+            this.product = null;
+        } else {
+            this.product = product;
+            product.getProductQnas().add(this);
+        }
     }
 
     public void setMember(Member member) {
@@ -54,14 +59,18 @@ public class ProductQna {
     }
 
     public void setAdmin(Admin admin) {
-        if(this.admin != null) {
-            this.admin.getProductQnas().remove(this);
+        if(admin == null) { //Admin을 삭제할 때 연관관계 끊기 위함
+            this.admin = null;
+        } else {
+            if(this.admin != null) { //기존 답변이 있으면 삭제 후 재답변
+                this.admin.getProductQnas().remove(this);
+            }
+            this.admin = admin;
+            admin.getProductQnas().add(this);
         }
-        this.admin = admin;
-        admin.getProductQnas().add(this);
     }
 
-    //==생성 메서드==//
+    //==생성 메소드==//
     public static ProductQna createProductQna(Product product, Member member) {
         ProductQna productQna = new ProductQna();
         productQna.setProduct(product);

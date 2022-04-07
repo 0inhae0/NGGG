@@ -1,15 +1,13 @@
 package com.example.NGGG.dto;
 
 import lombok.Data;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.util.List;
 
-//DTO for 상품등록(request)
+//DTO for 상품등록(request), 상품수정(request)
 @Data
-public class AddProductRequest {
+public class ProductRequest {
 
     @NotBlank
     private String productName;

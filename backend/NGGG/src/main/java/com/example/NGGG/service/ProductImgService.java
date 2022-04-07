@@ -4,8 +4,9 @@ import com.example.NGGG.common.ImgStore;
 import com.example.NGGG.domain.ImgCode;
 import com.example.NGGG.domain.Product;
 import com.example.NGGG.domain.ProductImg;
-import com.example.NGGG.dto.AddProductRequest;
+import com.example.NGGG.dto.ProductRequest;
 import com.example.NGGG.exception.NotFoundException;
+import com.example.NGGG.repository.ProductImg.ProductImgQueryRepository;
 import com.example.NGGG.repository.ProductImg.ProductImgRepository;
 import com.example.NGGG.repository.Product.ProductRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ public class ProductImgService {
 
     private final ImgStore imgStore;
     private final ProductImgRepository productImgRepository;
+    private final ProductImgQueryRepository productImgQueryRepository;
     private final ProductRepository productRepository;
 
     /**
@@ -45,7 +47,7 @@ public class ProductImgService {
      * 상품 이미지 등록
      */
     @Transactional
-    public void addProductImgs(AddProductRequest request, int productNo, MultipartFile main, List<MultipartFile> details) throws IOException { //main, details 추가됨
+    public void addProductImgs(ProductRequest request, int productNo, MultipartFile main, List<MultipartFile> details) throws IOException { //main, details 추가됨
 
         Product product = productRepository.findById(productNo)
                 .orElseThrow(() -> new NotFoundException("Product Not Found"));
@@ -66,7 +68,14 @@ public class ProductImgService {
         detailImgs.stream()
                 .forEach(img -> productImgRepository.save(img));
 
+    }
 
+    /**
+     * 상품 이미지 삭제
+     */
+    @Transactional
+    public void deleteProductImgs(int productNo) {
+        productImgRepository.deleteByProductNo(productNo);
     }
 
 

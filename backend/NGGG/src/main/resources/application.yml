@@ -16,6 +16,12 @@ spring:
         # show-sql: true
         format_sql: true
         default_batch_fetch_size: 100
+    defer-datasource-initialization: true
+
+  session:
+    store-type: jdbc
+    jdbc:
+      initialize-schema: always
 
 logging.level:
   # log를 통해 sql 출력

@@ -10,6 +10,7 @@ import com.example.NGGG.service.AdminService;
 import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -36,7 +37,7 @@ public class AdminApiController {
      * 로그인
      */
     @PostMapping("/admin/login")
-    public ResponseEntity<?> loginAdmin(@RequestBody @Valid LoginAdminRequest request) {
+    public ResponseEntity<LoginAdminResponse> loginAdmin(@RequestBody @Valid LoginAdminRequest request) {
         LoginAdminResponse response = adminService.login(request.getAdminId(), request.getAdminPwd());
         return ResponseEntity.ok(response);
     }
@@ -45,8 +46,7 @@ public class AdminApiController {
      * 회원가입
      */
     @PostMapping("/admin/signup")
-    public CreateAdminResponse saveAdmin(@RequestBody @Valid CreateAdminRequest request) {
-
+    public ResponseEntity<CreateAdminResponse> saveAdmin(@RequestBody @Valid CreateAdminRequest request) {
         Admin admin = createAdmin(request);
 
         if (adminService.checkIdDuplicate(request.getAdminId())
@@ -54,7 +54,7 @@ public class AdminApiController {
             throw new ConflictException("Unavailable SignUp Data");
         } else {
             int no = adminService.join(admin);
-            return new CreateAdminResponse(no);
+            return ResponseEntity.ok(new CreateAdminResponse(no));
         }
 
     }
@@ -80,33 +80,50 @@ public class AdminApiController {
     /**
      * 개인정보 수정
      */
-    @PostMapping("/admin/update/{admin_no}")
-    public AdminResponse updateAdmin(
+    @GetMapping("/admin/{admin_no}/update")
+    public ResponseEntity<AdminResponse> updateAdminForm(@PathVariable("admin_no") int no, Authentication authentication) {
+        //자기 id 아니면
+        if(parseInt(authentication.getName()) != no) throw new ForbiddenException("Access Denied");
+
+        Admin findAdmin = adminService.findOne(no);
+        return ResponseEntity.ok(new AdminResponse(findAdmin));
+    }
+
+    @PostMapping("/admin/{admin_no}/update")
+    public ResponseEntity updateAdmin(
             @PathVariable("admin_no") int no,
             @RequestBody @Valid UpdateAdminRequest request,
             Authentication authentication) {
-
         //자기 id 아니면
         if(parseInt(authentication.getName()) != no) throw new ForbiddenException("Access Denied");
 
         adminService.update(no, request);
-        Admin findAdmin = adminService.findOne(no);
-        return new AdminResponse(findAdmin);
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     /**
      * 개인정보 조회
      */
     @GetMapping("/admin/{admin_no}")
-    public AdminResponse viewAdmin(@PathVariable("admin_no") int no, Authentication authentication) {
-
+    public ResponseEntity<AdminResponse> viewAdmin(@PathVariable("admin_no") int no, Authentication authentication) {
         //자기 id 아니면
         if(parseInt(authentication.getName()) != no) throw new ForbiddenException("Access Denied");
 
         Admin findAdmin = adminService.findOne(no);
-        return new AdminResponse(findAdmin);
+        return ResponseEntity.ok(new AdminResponse(findAdmin));
     }
 
+    /**
+     * 회원 탈퇴
+     */
+    @DeleteMapping("/admin/{admin_no}/delete")
+    public ResponseEntity deleteAdmin(@PathVariable("admin_no") int no, Authentication authentication) {
+        //자기 id 아니면
+        if(parseInt(authentication.getName()) != no) throw new ForbiddenException("Access Denied");
+
+        adminService.deleteAdmin(no);
+        return new ResponseEntity(HttpStatus.OK);
+    }
 
     //DTO for 로그인(request)
     @Data

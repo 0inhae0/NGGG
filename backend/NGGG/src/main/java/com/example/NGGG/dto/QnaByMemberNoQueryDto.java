@@ -2,6 +2,7 @@ package com.example.NGGG.dto;
 
 import lombok.Data;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 public class QnaByMemberNoQueryDto {
@@ -21,9 +22,9 @@ public class QnaByMemberNoQueryDto {
     private String productQnaAns;
 
     //time
-    private LocalDate qnaRegdate;
+    private LocalDateTime qnaRegdate;
 
-    public QnaByMemberNoQueryDto(int productNo, String productName, String productQnaQue, String adminName, String productQnaAns, LocalDate qnaRegdate) {
+    public QnaByMemberNoQueryDto(int productNo, String productName, String productQnaQue, String adminName, String productQnaAns, LocalDateTime qnaRegdate) {
         this.productNo = productNo;
         this.productName = productName;
         this.productQnaQue = productQnaQue;

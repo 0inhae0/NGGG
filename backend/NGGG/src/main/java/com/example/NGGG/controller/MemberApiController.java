@@ -9,6 +9,7 @@ import com.example.NGGG.service.MemberService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -32,7 +33,7 @@ public class MemberApiController {
      * 로그인
      */
     @PostMapping("/member/login")
-    public ResponseEntity<?> loginMember(@RequestBody LoginMemberRequest request) {
+    public ResponseEntity<LoginMemberResponse> loginMember(@RequestBody LoginMemberRequest request) {
         LoginMemberResponse response = memberService.login(request.getMemberId(), request.getMemberPwd());
         return ResponseEntity.ok(response);
     }
@@ -41,8 +42,7 @@ public class MemberApiController {
      * 회원 가입
     */
     @PostMapping("/member/signup")
-    public CreateMemberResponse saveMember(@RequestBody @Valid CreateMemberRequest request) {
-
+    public ResponseEntity<CreateMemberResponse> saveMember(@RequestBody @Valid CreateMemberRequest request) {
         Member member = createMember(request);
 
         if (memberService.checkIdDuplicate(request.getMemberId())
@@ -51,7 +51,7 @@ public class MemberApiController {
             throw new ConflictException("Unavailable SignUp Data");
         } else {
             int no = memberService.join(member);
-            return new CreateMemberResponse(no);
+            return ResponseEntity.ok(new CreateMemberResponse(no));
         }
 
     }
@@ -88,8 +88,17 @@ public class MemberApiController {
     /**
      * 개인정보 수정
      */
-    @PostMapping("/member/update/{member_no}")
-    public MemberResponse updateMember (
+    @GetMapping("/member/{member_no}/update")
+    public ResponseEntity<MemberResponse> updateMemberForm(@PathVariable("member_no") int no, Authentication authentication) {
+        //자기 id 아니면
+        if(parseInt(authentication.getName()) != no) throw new ForbiddenException("Access Denied");
+
+        Member findMember = memberService.findOne(no);
+        return ResponseEntity.ok(new MemberResponse(findMember));
+    }
+
+    @PostMapping("/member/{member_no}/update")
+    public ResponseEntity updateMember (
             @PathVariable("member_no") int no,
             @RequestBody @Valid UpdateMemberRequest request,
             Authentication authentication) {
@@ -98,8 +107,7 @@ public class MemberApiController {
         if(parseInt(authentication.getName()) != no) throw new ForbiddenException("Access Denied");
 
         memberService.update(no, request);
-        Member findMember = memberService.findOne(no);
-        return new MemberResponse(findMember);
+        return new ResponseEntity(HttpStatus.OK);
     }
 
 
@@ -107,13 +115,24 @@ public class MemberApiController {
      * 개인정보 조회
      */
     @GetMapping("/member/{member_no}")
-    public MemberResponse viewMember(@PathVariable("member_no") int no, Authentication authentication) {
-
+    public ResponseEntity<MemberResponse> viewMember(@PathVariable("member_no") int no, Authentication authentication) {
         //자기 id 아니면
         if(parseInt(authentication.getName()) != no) throw new ForbiddenException("Access Denied");
 
         Member findMember = memberService.findOne(no);
-        return new MemberResponse(findMember);
+        return ResponseEntity.ok(new MemberResponse(findMember));
+    }
+
+    /**
+     * 회원 탈퇴
+     */
+    @DeleteMapping("/member/{member_no}/delete")
+    public ResponseEntity deleteMember(@PathVariable("member_no") int no, Authentication authentication) {
+        //자기 id 아니면
+        if(parseInt(authentication.getName()) != no) throw new ForbiddenException("Access Denied");
+
+        memberService.deleteMember(no);
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     //DTO for 로그인(request)

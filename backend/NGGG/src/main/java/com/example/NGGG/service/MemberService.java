@@ -90,7 +90,21 @@ public class MemberService {
      * 회원 한명 조회
      */
     public Member findOne(int no){
-        return memberRepository.findByNo(no);
+        Member findMember = memberRepository.findById(no)
+                .orElseThrow(() -> new NotFoundException("Member Not Found"));
+        return findMember;
+    }
+
+    /**
+     * 회원 삭제
+     */
+    public void deleteMember(int no) {
+        Member findMember = memberRepository.findById(no)
+                .orElseThrow(() -> new NotFoundException("Member Not Found"));
+        //연관관계 끊기
+        findMember.getOrders().stream()
+                        .forEach(o -> o.setMember(null));
+        memberRepository.deleteById(no);
     }
 
 

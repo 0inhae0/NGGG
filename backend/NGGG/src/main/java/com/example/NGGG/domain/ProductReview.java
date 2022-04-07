@@ -2,6 +2,7 @@ package com.example.NGGG.domain;
 
 import lombok.Getter;
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.security.core.parameters.P;
 
 import javax.persistence.*;
 
@@ -30,5 +31,15 @@ public class ProductReview {
     private byte[] productReviewImg;
 
     @CreationTimestamp
-    private LocalDate reviewRegdate;
+    private LocalDate reviewRegdate; //나중에 LocalDateTime으로 수정
+
+    //==연관관계 편의 메소드==//
+    public void setProduct(Product product) {
+        if(product == null) {
+            this.product = null;
+        } else {
+            this.product = product;
+            product.getProductReviews().add(this);
+        }
+    }
 }
