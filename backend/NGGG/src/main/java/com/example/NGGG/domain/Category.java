@@ -14,6 +14,7 @@ public class Category {
     @Column(name = "category_no")
     private int no;
 
+    @Column(unique = true)
     private String categoryName;
 
     @OneToMany(mappedBy = "category")

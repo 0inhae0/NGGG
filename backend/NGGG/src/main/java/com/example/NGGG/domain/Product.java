@@ -1,9 +1,13 @@
 package com.example.NGGG.domain;
 
+import com.example.NGGG.exception.NotEnoughStocksException;
 import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,23 +21,30 @@ public class Product {
     @Column(name = "product_no")
     private int no;
 
+    @Setter
     private String productName;
 
+    @Setter
     private int productPrice;
 
+    @Setter
     private String productInfo;
 
-    private LocalDateTime productRegdate;
+    @CreationTimestamp
+    private LocalDate productRegdate;
 
+    @Setter
     private int productStocks;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "category_no")
     private Category category;
 
-    private int productLikeCnt;
+    @Setter
+    @ColumnDefault("0")
+    private int productLikeCnt; //default 0
 
-    @OneToMany(mappedBy = "product")
+    @OneToMany(mappedBy = "product", cascade = CascadeType.REMOVE)
     private List<Cart> carts = new ArrayList<>();
 
     @OneToMany(mappedBy = "product")
@@ -42,12 +53,48 @@ public class Product {
     @OneToMany(mappedBy = "product")
     private List<ProductReview> productReviews = new ArrayList<>();
 
-    @OneToMany(mappedBy = "product")
+    @OneToMany(mappedBy = "product", cascade = CascadeType.REMOVE)
     private List<ProductImg> productImgs = new ArrayList<>();
 
     @OneToMany(mappedBy = "product")
     private List<OrderProduct> orderProducts = new ArrayList<>();
 
-    @OneToMany(mappedBy = "product")
+    @OneToMany(mappedBy = "product", cascade = CascadeType.REMOVE)
     private List<MemberProduct> memberProducts = new ArrayList<>();
+
+    //==연관관계 편의 메소드==//
+    public void setCategory(Category category) {
+        this.category = category;
+        category.getProducts().add(this);
+    }
+
+    //==생성 메소드==//
+    public static Product createProduct(String productName, int productPrice, String productInfo, int productStocks, Category category) {
+        Product product = new Product();
+        product.setProductName(productName);
+        product.setProductPrice(productPrice);
+        product.setProductInfo(productInfo);
+        product.addStocks(productStocks);
+        product.setCategory(category);
+        return product;
+    }
+
+    //==비즈니스 로직==//
+    /**
+     * 재고 증가
+     */
+    public void addStocks(int quantity) {
+        this.productStocks += quantity;
+    }
+
+    /**
+     * 재고 감소
+     */
+    public void removeStocks(int quantity) {
+        int restStocks = this.productStocks;
+        if(restStocks < 0) {
+            throw new NotEnoughStocksException("Need More Stocks");
+        }
+        this.productStocks -= quantity;
+    }
 }

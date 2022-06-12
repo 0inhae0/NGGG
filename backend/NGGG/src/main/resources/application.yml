@@ -10,12 +10,18 @@ spring:
     hibernate:
 # ddl-auto: create : 기존테이블 삭제 후 다시 생성(DROP+CREATE)
 # create는 반드시 로컬환경에서만 사용하기
-      ddl-auto: create
+      ddl-auto: none
     properties:
       hibernate:
         # show-sql: true
         format_sql: true
         default_batch_fetch_size: 100
+    defer-datasource-initialization: true
+
+  session:
+    store-type: jdbc
+    jdbc:
+      initialize-schema: always
 
 logging.level:
   # log를 통해 sql 출력
@@ -25,3 +31,8 @@ logging.level:
 
 server:
   port: 7080
+
+
+# 상품 이미지 파일 저장 경로
+file:
+  dir: C:\Users\82107\NGGG-img
